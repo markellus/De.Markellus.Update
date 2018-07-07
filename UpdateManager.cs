@@ -223,13 +223,16 @@ namespace De.Markellus.Update
 
         private void FireUpdateStateChanged(UpdateEventArgs e)
         {
-            EventHandler<UpdateEventArgs> local;
-
-            lock (this)
+            Utils.DispatcherInvoke(() =>
             {
-                local = UpdateStateChanged;
-            }
-            local?.Invoke(this, e);
+                EventHandler<UpdateEventArgs> local;
+
+                lock (this)
+                {
+                    local = UpdateStateChanged;
+                }
+                local?.Invoke(this, e);
+            });
         }
     }
 }

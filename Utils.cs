@@ -1,5 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
+
 namespace De.Markellus.Update
 {
     public static class Utils
@@ -62,6 +66,19 @@ namespace De.Markellus.Update
             {
                 Thread.Sleep(50); //Explorer Bugfix
                 Directory.Delete(dir);
+            }
+        }
+
+        public static void DispatcherInvoke(Action action)
+        {
+            Dispatcher dispatchObject = Application.Current?.Dispatcher;
+            if (dispatchObject == null || dispatchObject.CheckAccess())
+            {
+                action();
+            }
+            else
+            {
+                dispatchObject.Invoke(action);
             }
         }
     }
