@@ -5,7 +5,6 @@ namespace De.Markellus.Update
     public enum UpdateStatus
     {
         Idle,
-        Error,
         /// <summary>
         /// Es werden Informationen über vorhandene Updates geladen.
         /// </summary>
@@ -38,7 +37,31 @@ namespace De.Markellus.Update
         /// <summary>
         /// Ein Update wird installiert.
         /// </summary>
-        Installing
+        Installing,
+        /// <summary>
+        /// Der Update-Server ist offline.
+        /// </summary>
+        ErrorServerDown,
+        /// <summary>
+        /// Der Update-Server sendet korrupte Info-Daten.
+        /// </summary>
+        ErrorInvalidInfo,
+        /// <summary>
+        /// Der Download des Updates ist fehlgeschlagen.
+        /// </summary>
+        ErrorDownloadFailed,
+        /// <summary>
+        /// Der Download des Updates wurde unerwartet unterbrochen.
+        /// </summary>
+        ErrorDownloadInterrupted,
+        /// <summary>
+        /// Das Entpacken des Update-Paketes ist fehlgeschlagen.
+        /// </summary>
+        ErrorUnpackingFailed,
+        /// <summary>
+        /// Das Installieren des Updates ist fehlgeschlagen.
+        /// </summary>
+        ErrorInstallFailed,
     }
 
     public class UpdateEventArgs : EventArgs
@@ -47,13 +70,10 @@ namespace De.Markellus.Update
 
         public int ProgressPercentage { get; private set; }
 
-        public string Message { get; private set; }
-
-        public UpdateEventArgs(UpdateStatus status, int percentage = -1, string message = "")
+        public UpdateEventArgs(UpdateStatus status, int percentage = -1)
         {         
             this.Status = status;
             this.ProgressPercentage = percentage;
-            this.Message = message;
         }
     }
 }

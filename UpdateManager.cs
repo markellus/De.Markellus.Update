@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
+using System.Xml;
 
 namespace De.Markellus.Update
 {
@@ -65,9 +66,13 @@ namespace De.Markellus.Update
                         FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.LoadInfoFinished, 100));
                     }
                 }
-                catch (Exception ex)
+                catch (WebException ex)
                 {
-                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.Error, -1, ex.Message));
+                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorServerDown, -1));
+                }
+                catch(XmlException ex)
+                {
+                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorInvalidInfo, -1));
                 }
             }).Start();
         }
@@ -88,7 +93,7 @@ namespace De.Markellus.Update
                 }
                 catch (Exception ex)
                 {
-                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.Error, -1, ex.Message));
+                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorDownloadFailed, -1));
                 }
             }).Start();
         }
@@ -135,7 +140,7 @@ namespace De.Markellus.Update
                 }
                 catch (Exception ex)
                 {
-                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.Error, -1, ex.Message));
+                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorUnpackingFailed, -1));
                 }
             }).Start();
         }
@@ -174,7 +179,7 @@ namespace De.Markellus.Update
                         foreach (Process other in p.Where(t => t.Id != self.Id))
                         {
                             other.Kill();
-                        }                        
+                        }
                     }
 
                     Utils.DeleteDirectory(_argsPath);
@@ -189,7 +194,7 @@ namespace De.Markellus.Update
                 }
                 catch (Exception ex)
                 {
-                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.Error, -1, ex.Message + "\r\n" + ex.StackTrace));
+                    FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorInstallFailed, -1));
                 }
             }).Start();
         }
@@ -202,7 +207,7 @@ namespace De.Markellus.Update
             }
             catch (Exception ex)
             {
-                FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.Error, -1, ex.Message));
+                FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorDownloadInterrupted, -1));
             }
             
         }
@@ -216,7 +221,7 @@ namespace De.Markellus.Update
             }
             catch (Exception ex)
             {
-                FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.Error, -1, ex.Message + "\r\n\r\n" + e.Error));
+                FireUpdateStateChanged(new UpdateEventArgs(UpdateStatus.ErrorDownloadFailed, -1));
             }
             
         }    

@@ -48,13 +48,20 @@ namespace De.Markellus.Update
             //Pakete auslesen
             foreach (XElement el in _doc.Root.Elements().Where(i => i.Name.LocalName == "package"))
             {
-                Packages.Add(new UpdatePackage()
+                try
                 {
-                    Version = new Version(el.Elements().First(i => i.Name.LocalName == "version").Value),
-                    DownloadLink = el.Elements().First(i => i.Name.LocalName == "download").Value,
-                    PostLaunch = el.Elements().First(i => i.Name.LocalName == "launchAfter").Value,
-                    Arguments = String.Format(el.Elements().First(i => i.Name.LocalName == "launchArguments").Value, Path.GetFullPath("./").Trim('\\')),
-                });
+                    Packages.Add(new UpdatePackage()
+                    {
+                        Version = new Version(el.Elements().First(i => i.Name.LocalName == "version").Value),
+                        DownloadLink = el.Elements().First(i => i.Name.LocalName == "download").Value,
+                        PostLaunch = el.Elements().First(i => i.Name.LocalName == "launchAfter").Value,
+                        Arguments = String.Format(el.Elements().First(i => i.Name.LocalName == "launchArguments").Value, Path.GetFullPath("./").Trim('\\')),
+                    });
+                }
+                catch
+                {
+                    throw new XmlException("Invalid XML-File: Invalid or missing data");
+                }
             }
         }
 
