@@ -50,13 +50,16 @@ namespace De.Markellus.Update
             {
                 try
                 {
+                    XElement download   = el.Elements().First(i => i.Name.LocalName == "download");
+                    bool isRelativePath = Convert.ToBoolean(download.Elements().FirstOrDefault(i => i.Name.LocalName == "relativePath")?.Value);
+
                     Packages.Add(new UpdatePackage()
                     {
-                        Version = new Version(el.Elements().First(i => i.Name.LocalName == "version").Value),
-                        DownloadLink = el.Elements().First(i => i.Name.LocalName == "download").Value,
-                        PostLaunch = el.Elements().First(i => i.Name.LocalName == "launchAfter").Value,
-                        Arguments = String.Format(el.Elements().First(i => i.Name.LocalName == "launchArguments").Value, Path.GetFullPath("./").Trim('\\')),
-                    });
+                        Version      = new Version(el.Elements().First(i => i.Name.LocalName == "version").Value),
+                        DownloadLink = isRelativePath ? Config.RemoteUpdatePath + download.Elements().First(i => i.Name.LocalName == "file").Value : download.Value,
+                        PostLaunch   = el.Elements().First(i => i.Name.LocalName == "launchAfter").Value,
+                        Arguments    = String.Format(el.Elements().First(i => i.Name.LocalName == "launchArguments").Value, Path.GetFullPath("./").Trim('\\')),
+                    });  
                 }
                 catch
                 {
